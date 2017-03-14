@@ -20,14 +20,14 @@ The goals / steps of this project are the following:
 [augmented]: ./writeup/augmented.png "Examples of augmented images"
 [augmented_by_class]: ./writeup/augmented_by_class.png "Number of examples by class in augmented dataset"
 
-[image1]: ./examples/visualization.jpg "Visualization"
-[image2]: ./examples/grayscale.jpg "Grayscaling"
-[image3]: ./examples/random_noise.jpg "Random Noise"
-[image4]: ./examples/placeholder.png "Traffic Sign 1"
-[image5]: ./examples/placeholder.png "Traffic Sign 2"
-[image6]: ./examples/placeholder.png "Traffic Sign 3"
-[image7]: ./examples/placeholder.png "Traffic Sign 4"
-[image8]: ./examples/placeholder.png "Traffic Sign 5"
+[web_image_1]: ./web_images/2/sign-stating-speed-limit-km-h-german-countryside-near-berlin-30071184.jpg
+[web_image_2]: ./web_images/12/forest-of-traffic-signs-at-a-road-construction-zone-heilbronn-south-d266t9.jpg
+[web_image_3]: ./web_images/14/459381273.jpg
+[web_image_4]: ./web_images/14/street-sign-stop.jpg
+[web_image_5]: ./web_images/25/german-traffic-signcaution-roadworks-G16FX8.jpg
+[web_image_6]: ./web_images/25/roadworks-german-road-sign-ahead-81618639.jpg
+[web_iamge_7]: ./web_images/34/turn-left.jpg
+
 
 ## Rubric Points
 ###Here I will consider the [rubric points](https://review.udacity.com/#!/rubrics/481/view) individually and describe how I addressed each point in my implementation.  
@@ -182,7 +182,7 @@ The following combinations of filters in convolution layers, and neurons in full
 | ms10_1      | 128-128-400  | 0.99988  | 0.98254 | same as ms10_1, L2_lambda=0.001 |
 | ms10_1.1    | 128-128-400  | 0.99874  | 0.97982 | same as ms10_1, L2_lambda=0.01 |
 | ms10_1.2    | 128-128-400  | 0.99998  | 0.98912 | same as ms10_1, L2_lambda=0.001, learning rate 0.0001 |
-| ms10_1.3    | 128-128-400  | ???      | ???     | same as ms10_1, L2_lambda=0.001, learning rate 0.0001, 1.5x dataset size |
+| ms10_1.3    | 128-128-400  | ???0.99995      | ???0.98934     | same as ms10_1, L2_lambda=0.001, learning rate 0.0001, 1.5x dataset size |
 
 With the regularization it is taking more epochs to achieve the high training accuracy, compared to the initial approach (ms9).
 
@@ -212,27 +212,40 @@ As the last step, the size of the augmented dataset was increased to be 1.5 time
 
 Here are five German traffic signs that I found on the web:
 
-![alt text][image4] ![alt text][image5] ![alt text][image6] 
-![alt text][image7] ![alt text][image8]
+![alt text][web_image_1]
+![alt text][web_image_2]
+![alt text][web_image_3] 
+![alt text][web_image_4]
+![alt text][web_image_5]
+![alt text][web_image_6]
+![alt text][web_image_7]
 
-The first image might be difficult to classify because ...
+The speed limit 50 can be confused with speed limit 30 due to similarity of the digits, however both signs were very well represented even in the non augmented dataset.
+
+The "Stop" and "Priority road" signs both have quite unique shapes, and should not cause confusing.
+
+The "Turn left ahead" can be difficult, as it was not very well represented in the original dataset. Also it has a glare on it.
+
+One of the "Road work" signs is skewed, so this can add some challenge in recognition.
 
 ####2. Discuss the model's predictions on these new traffic signs and compare the results to predicting on the test set. Identify where in your code predictions were made. At a minimum, discuss what the predictions were, the accuracy on these new predictions, and compare the accuracy to the accuracy on the test set (OPTIONAL: Discuss the results in more detail as described in the "Stand Out Suggestions" part of the rubric).
 
-The code for making predictions on my final model is located in the tenth cell of the Ipython notebook.
+The code for making predictions on my final model is located in the **TODO** cells of the Ipython notebook.
 
 Here are the results of the prediction:
 
 | Image			        |     Prediction	        					| 
 |:---------------------:|:---------------------------------------------:| 
-| Stop Sign      		| Stop sign   									| 
-| U-turn     			| U-turn 										|
-| Yield					| Yield											|
-| 100 km/h	      		| Bumpy Road					 				|
-| Slippery Road			| Slippery Road      							|
+| Turn left Ahead      		| Turn left ahead   									| 
+| Road work     			| Road work 										|
+| Road work (skewed)					| Road work											|
+| Priority road	      		| Priority road					 				|
+| Stop			| Stop      							|
+| Stop			| Stop      							|
+| Speed limit 50 |  Speed limit 50 |
 
 
-The model was able to correctly guess 4 of the 5 traffic signs, which gives an accuracy of 80%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 7 of the 7 traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of ...
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
