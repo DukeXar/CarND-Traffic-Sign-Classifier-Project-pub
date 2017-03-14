@@ -175,13 +175,14 @@ The following combinations of filters in convolution layers, and neurons in full
 | ---         | ---          | ---               | ---                 | ---      |
 | ms9         | 32-128-400   | 0.99999  | 0.92000 | No dropout and regularization |
 | ms10        | 32-128-400   | 0.99998  | 0.97959 | L2 regularization and dropout, L2_lambda=0.001 |
-| ms10_2      | 32-128-200   | 0.99999  | 0.97891 | L2 regularization and dropout |
-| ms10_3      | 32-64-400    | 0.99988  | 0.98231 | L2 regularization and dropout |
-| ms10_4      | 32-64-200    | 0.99998  | 0.97800 | L2 regularization and dropout |
-| ms10_4.1    | 32-64-200    | 0.99951  | 0.97914 | L2 regularization and dropout, L2_lambda=0.01 |
-| ms10_1      | 128-128-400  | 0.99988  | 0.98254 | L2 regularization and dropout |
-| ms10_1.1    | 128-128-400  | 0.99874  | 0.97982 | L2 regularization and dropout, L2_lambda=0.01 |
-| ms10_1.2    | 128-128-400  | 0.99998  | 0.98912 | L2 regularization and dropout, L2_lambda=0.001, learning rate 0.0001 |
+| ms10_2      | 32-128-200   | 0.99999  | 0.97891 | L2 regularization and dropout, L2_lambda=0.001 |
+| ms10_3      | 32-64-400    | 0.99988  | 0.98231 | L2 regularization and dropout, L2_lambda=0.001 |
+| ms10_4      | 32-64-200    | 0.99998  | 0.97800 | L2 regularization and dropout, L2_lambda=0.001 |
+| ms10_4.1    | 32-64-200    | 0.99951  | 0.97914 | same as ms10_4, L2_lambda=0.01 |
+| ms10_1      | 128-128-400  | 0.99988  | 0.98254 | same as ms10_1, L2_lambda=0.001 |
+| ms10_1.1    | 128-128-400  | 0.99874  | 0.97982 | same as ms10_1, L2_lambda=0.01 |
+| ms10_1.2    | 128-128-400  | 0.99998  | 0.98912 | same as ms10_1, L2_lambda=0.001, learning rate 0.0001 |
+| ms10_1.3    | 128-128-400  | ???      | ???     | same as ms10_1, L2_lambda=0.001, learning rate 0.0001, 1.5x dataset size |
 
 With the regularization it is taking more epochs to achieve the high training accuracy, compared to the initial approach (ms9).
 
@@ -193,20 +194,17 @@ The model that performed best on the validation dataset was chosen as the final 
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-The configuration of the training parameters is located in the ... cell of the notebook, there it is possible to choose the maximum number of epochs to train, the batch size,
-learning rate, vector of keep probabilities for the dropout layers (last item is for the fully-connected layer, others are for the convolutional layers), L2 lambda
-for L2 regularization, patience parameter in number of epochs for early termination.
-It also provides a way to configure the function to create the model and where the model training state should be stored.
+The configuration of the training parameters is located in the **TODO** cell of the notebook, there it is possible to choose the maximum number of epochs to train, the batch size, learning rate, vector of keep probabilities for the dropout layers (last item is for the fully-connected layer, others are for the convolutional layers), L2 lambda for L2 regularization, patience parameter in number of epochs for early termination. It also provides a way to configure the function to create the model and where the model training state should be stored.
 
-To train the model, the Adam optimizer was chosen as it is quite efficient and easy to use. The model graph is constructed in cell .... Here I define the evaluation function,
-which is used to output the accuracy after each epoch. The evaluation is done with disabling dropout logic, as otherwise its results would be random.
+To train the model, the Adam optimizer was chosen as it is quite efficient and easy to use. The model graph is constructed in the cell **TODO**. Here I define the evaluation function, which is used to output the accuracy after each epoch. During the evaluation, the dropout logic is disabled, by using keep_prob=1.0, to remove randomness from the results.
 
-The training code is located in the ... cell of the notebook. The training code is able to resume the training from the epoch where it stopped the last time, it keeps track
-of the model state that performed best on the validation data set, implements early termination if model did not improve for a configured number of epochs, reports and displays
-the progress of training and validation accuracies to allow visually recognize whether model is overfitting or underfitting.
+The training code is located in the **TODO** cell of the notebook. The training code is able to resume the training from the epoch where it stopped the last time, it keeps track of the model state that performed best on the validation data set, implements early termination if model did not improve for a configured number of epochs, reports and displays the progress of training and validation accuracies to allow visually recognize whether model is overfitting or underfitting.
 
-The training itself is executed in the ... cell of the notebook.
+The training itself is executed in the **TODO** cell of the notebook.
 
+Initially I incorrectly assumed that learning rate automatically decays in the Adam optimizer, which apparently was not happening. Because it was time consuming to train each model, I have not tested all the models, but instead fine-tuned only the last one, by changing the learning rate after about 50 epochs manually.
+
+As the last step, the size of the augmented dataset was increased to be 1.5 times the maximum per class, and the best performing model `ms10_1.2` was trained on that data set as `ms10_1.3`.
 
 ###Test a Model on New Images
 
