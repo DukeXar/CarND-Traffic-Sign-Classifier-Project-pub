@@ -132,26 +132,25 @@ After loading, the training dataset is initially shuffled in the cell **#19**.
 
 ####3. Describe, and identify where in your code, what your final model architecture looks like including model type, layers, layer sizes, connectivity, etc.) Consider including a diagram and/or table describing the final model.
 
-The code for my final model is located in the cells **#20 - #21** of the notebook. 
+The code in the cell **#20** is a network builder, that simplifies putting together the tensorflow graph. The cells **#21-#26** contains creation functions for the architectures that were tested. The final model is created by `create_model_ms10_1`.
 
 My final model consisted of the following layers:
 
-| Layer         		|     Description	        					| 
-|:---------------------:|:---------------------------------------------:| 
-| Input         		| 32x32x3 RGB image   							| 
-| Convolution 5x5     	| 1x1 stride, same padding, outputs 32x32x128   |
-| RELU					|												|
-| Max pooling	      	| 2x2 stride, outputs 16x16x128 				|
-| Dropout               | keep probability 0.9 |
-| Convolution 5x5     	| 1x1 stride, same padding, outputs 16x16x128   |
-| RELU					|												|
-| Max pooling	      	| 2x2 stride, outputs 8x8x128 				|
-| Dropout               | keep probability 0.9 |
-| Max pooling           | 2x2 stride, outputs 8x8x128, connected to output of first max pool layer |
-| Fully connected		| 400 neurons        									|
-| Dropout               | keep probability 0.5 |
-| Fully connected		| 43 neurons        									|
-
+| # | Layer         		|     Description	        					| 
+|:---:|:---------------------:|:---------------------------------------------:| 
+| 1 | Input         		| 32x32x3 RGB image   							| 
+| 2 | Convolution 5x5     	| 1x1 stride, same padding, outputs 32x32x128   |
+| 3 | RELU					|												|
+| 4 | Max pooling	      	| 2x2 stride, outputs 16x16x128 				|
+| 5 | Dropout               | keep probability 0.9 |
+| 6 | Convolution 5x5     	| 1x1 stride, same padding, outputs 16x16x128   |
+| 7 | RELU					|												|
+| 8 | Max pooling	      	| 2x2 stride, outputs 8x8x128 				|
+| 9 | Dropout               | keep probability 0.9 |
+| 10 | Max pooling           | 2x2 stride, outputs 8x8x128, connected to layer 4 |
+| 11 | Fully connected		| 400 neurons        									|
+| 12 | Dropout               | keep probability 0.5 |
+| 13 | Fully connected		| 43 neurons        									|
 
 ####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
@@ -162,45 +161,35 @@ My final model results were:
 * validation set accuracy of ? 
 * test set accuracy of ?
 
-The first architecture was the classic LeNet architecture as it was great in characters recognition, and seemed as a good start. After 10 epochs it
-achieved training accuracy of 0.977 (from 0.878 in the first epoch), and validation set accuracy of 0.929 (0.897 on the first epoch). This was interpreted as
-the network is not big enough for the complexity of the input data.
+The first architecture was the classic LeNet architecture as it was great in characters recognition, and seemed as a good start. Without regularization it achieved training accuracy of 0.99921 and validation accuracy of 0.96825. The difference seemed to be quite big. Adding regularization did not help much, and training set accuracy of 0.99836 and validation set accuracy of 0.96236 was achieved.
 
-After reading various articles, was quite keen on trying the multiscale architecture, where the main idea is that fully connected layer receives inputs
-not just from the last convolutional layer, but from all of them. As long as every next convolutional builds upon previous and recongnizes more complex
-objects, some details in the complex objects can be important for the classifier. For example, shape of the sign can be recognizes by the second layer of the
-network, while simple lines from the first layer can indicate that it is the "Priority Road" sign. Also it worked well **TODO article**.
+After reading various articles, was quite keen on trying the multiscale architecture, where the main idea is that fully connected layer receives inputs not just from the last convolutional layer, but from all of them. As long as every next convolutional builds upon previous and recongnizes more complex objects, some details in the complex objects can be important for the classifier. For example, shape of the sign can be recognizes by the second layer of the network, while simple lines from the first layer can indicate that it is the "Priority Road" sign. Also it worked well in [Pierre Sermanet and Yann LeCun paper](http://www.academia.edu/download/31151276/sermanet-ijcnn-11.pdf).
 
-The filter size was choosen as 5x5, which seems to be the generic one. The number of filters were pretty arbitrary - 32 and 128. The classifier was choosen to have 400
-neurons in the hidden layer.
+The filter size was choosen as 5x5, which seems to be the generic one. The number of filters were pretty arbitrary - 32 and 128. The classifier was choosen to have 400 neurons in the hidden layer.
 
-Initial training showed that the model was able to overfit the training dataset, achieving accuracy of more than 0.99 in less than 10 epochs. But it was not able to generalize
-on the validation dataset, providing validation accuracy around 0.92. To fight with overfitting, a L2 regularization was added, raising the validation accuracy to 0.97. Then the dropout layers
-were added after each layer with different probabilities for each layer. The generic approach was to have little or no dropout for the convolution layers and drop 50% of the data in the
-classifier layer.
+Initial training showed that the model was able to overfit the training dataset, achieving accuracy of more than 0.99 in less than 10 epochs. But it was not able to generalize on the validation dataset, providing validation accuracy around 0.92. To fight with overfitting, a L2 regularization was added, raising the validation accuracy to 0.97. Then the dropout layers were added after each layer with different probabilities for each layer. The generic approach was to have little or no dropout for the convolution layers and drop 50% of the data in the classifier layer.
 
 The following combinations of filters in convolution layers, and neurons in fully connected layer were tested:
 
 | Model name  | Architecture | Training accuracy | Validation accuracy | Comments |
 | ---         | ---          | ---               | ---                 | ---      |
 | ms9         | 32-128-400   | 0.99999  | 0.92000 | No dropout and regularization |
-| ms10        | 32-128-400   | 0.99999  | 0.97959 | L2 regularization and dropout, L2_lambda=0.001 |
-| ms10_2      | 32-128-200   | 0.99999  | 0.97891 | same |
-| ms10_3      | 32-64-400    | 0.99988  | 0.98231 | same |
-| ms10_4      | 32-64-200    | 0.99998  | 0.97800 | same |
-| ms10_1      | 128-128-400  | 0.99998  | 0.98912 | same, learning rate 0.0001 |
-| ms10_1.1    | 128-128-400  | 0.99874  | 0.97982 | same, L2_lambda=0.01 |
+| ms10        | 32-128-400   | 0.99998  | 0.97959 | L2 regularization and dropout, L2_lambda=0.001 |
+| ms10_2      | 32-128-200   | 0.99999  | 0.97891 | L2 regularization and dropout |
+| ms10_3      | 32-64-400    | 0.99988  | 0.98231 | L2 regularization and dropout |
+| ms10_4      | 32-64-200    | 0.99998  | 0.97800 | L2 regularization and dropout |
+| ms10_4.1    | 32-64-200    | 0.99951  | 0.97914 | L2 regularization and dropout, L2_lambda=0.01 |
+| ms10_1      | 128-128-400  | 0.99988  | 0.98254 | L2 regularization and dropout |
+| ms10_1.1    | 128-128-400  | 0.99874  | 0.97982 | L2 regularization and dropout, L2_lambda=0.01 |
+| ms10_1.2    | 128-128-400  | 0.99998  | 0.98912 | L2 regularization and dropout, L2_lambda=0.001, learning rate 0.0001 |
 
 With the regularization it is taking more epochs to achieve the high training accuracy, compared to the initial approach (ms9).
 
-It is visible from the table, that most configurations were able to overfit the training
-dataset even with regularization and dropouts, although the difference between validation and training accuracy is not as huge as without.
+It is visible from the table, that most configurations were able to overfit the training dataset even with regularization and dropouts, although the difference between validation and training accuracy is much lower.
 
-Another way to avoid overfitting was try to simplify the model by reducing number of filters and neurons in the fully connected layer, but such models performed not as good
-on the validation dataset, compared to more complex ones.
+Another way to avoid overfitting was try to simplify the model by reducing number of filters and neurons in the fully connected layer, but such models performed not as good on the validation dataset, compared to more complex ones.
 
 The model that performed best on the validation dataset was chosen as the final one.
-
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
