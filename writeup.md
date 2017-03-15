@@ -26,7 +26,7 @@ The goals / steps of this project are the following:
 [web_image_4]: ./web_images/14/street-sign-stop.jpg
 [web_image_5]: ./web_images/25/german-traffic-signcaution-roadworks-G16FX8.jpg
 [web_image_6]: ./web_images/25/roadworks-german-road-sign-ahead-81618639.jpg
-[web_iamge_7]: ./web_images/34/turn-left.jpg
+[web_image_7]: ./web_images/34/turn-left.jpg
 
 
 ## Rubric Points
@@ -126,7 +126,7 @@ The distribution of the images by class is the following:
 
 ![Train dataset distribution after augmentation][augmented_by_class]
 
-The augmentation is done in the cell **#11** of the notebook, and extended dataset is stored in `X_train_extended` and `y_train_extended`. The data sets are then normalized in the cell **#12**, cached for future usage and loaded back in the cells **#16 - #17**.
+The augmentation is done in the cell **#11** of the notebook, and extended dataset is stored in `X_train_extended` and `y_train_extended`. The data sets are then normalized in the cell **#13**, cached for future usage and loaded back in the cells **#14-#17**.
 
 After loading, the training dataset is initially shuffled in the cell **#19**.
 
@@ -151,15 +151,16 @@ My final model consisted of the following layers:
 | 11 | Fully connected		| 400 neurons        									|
 | 12 | Dropout               | keep probability 0.5 |
 | 13 | Fully connected		| 43 neurons        									|
+| 14 | Softmax            | Output                              |
 
 ####5. Describe the approach taken for finding a solution. Include in the discussion the results on the training, validation and test sets and where in the code these were calculated. Your approach may have been an iterative process, in which case, outline the steps you took to get to the final solution and why you chose those steps. Perhaps your solution involved an already well known implementation or architecture. In this case, discuss why you think the architecture is suitable for the current problem.
 
 The code for calculating the accuracy of the model is located in the ninth cell of the Ipython notebook.
 
 My final model results were:
-* training set accuracy of ?
-* validation set accuracy of ? 
-* test set accuracy of ?
+* training set accuracy of 0.99995
+* validation set accuracy of 0.98934
+* test set accuracy of 0.981
 
 The first architecture was the classic LeNet architecture as it was great in characters recognition, and seemed as a good start. Without regularization it achieved training accuracy of 0.99921 and validation accuracy of 0.96825. The difference seemed to be quite big. Adding regularization did not help much, and training set accuracy of 0.99836 and validation set accuracy of 0.96236 was achieved.
 
@@ -182,7 +183,7 @@ The following combinations of filters in convolution layers, and neurons in full
 | ms10_1      | 128-128-400  | 0.99988  | 0.98254 | same as ms10_1, L2_lambda=0.001 |
 | ms10_1.1    | 128-128-400  | 0.99874  | 0.97982 | same as ms10_1, L2_lambda=0.01 |
 | ms10_1.2    | 128-128-400  | 0.99998  | 0.98912 | same as ms10_1, L2_lambda=0.001, learning rate 0.0001 |
-| ms10_1.3    | 128-128-400  | ???0.99995      | ???0.98934     | same as ms10_1, L2_lambda=0.001, learning rate 0.0001, 1.5x dataset size |
+| ms10_1.3    | 128-128-400  | 0.99995  | 0.98934 | same as ms10_1, L2_lambda=0.001, learning rate 0.0001, 1.5x dataset size |
 
 With the regularization it is taking more epochs to achieve the high training accuracy, compared to the initial approach (ms9).
 
@@ -194,13 +195,13 @@ The model that performed best on the validation dataset was chosen as the final 
 
 ####4. Describe how, and identify where in your code, you trained your model. The discussion can include the type of optimizer, the batch size, number of epochs and any hyperparameters such as learning rate.
 
-The configuration of the training parameters is located in the **TODO** cell of the notebook, there it is possible to choose the maximum number of epochs to train, the batch size, learning rate, vector of keep probabilities for the dropout layers (last item is for the fully-connected layer, others are for the convolutional layers), L2 lambda for L2 regularization, patience parameter in number of epochs for early termination. It also provides a way to configure the function to create the model and where the model training state should be stored.
+The configuration of the training parameters is located in the cell **#27** of the notebook, there it is possible to choose the maximum number of epochs to train, the batch size, learning rate, vector of keep probabilities for the dropout layers (last item is for the fully-connected layer, others are for the convolutional layers), L2 lambda for L2 regularization, patience parameter in number of epochs for early termination. It also provides a way to configure the function to create the model and where the model training state should be stored.
 
-To train the model, the Adam optimizer was chosen as it is quite efficient and easy to use. The model graph is constructed in the cell **TODO**. Here I define the evaluation function, which is used to output the accuracy after each epoch. During the evaluation, the dropout logic is disabled, by using keep_prob=1.0, to remove randomness from the results.
+To train the model, the Adam optimizer was chosen as it is quite efficient and easy to use. The model graph is constructed in the cell **#28**. Here I define the evaluation function, which is used to output the accuracy after each epoch. During the evaluation, the dropout logic is disabled, by using keep_prob=1.0, to remove randomness from the results.
 
-The training code is located in the **TODO** cell of the notebook. The training code is able to resume the training from the epoch where it stopped the last time, it keeps track of the model state that performed best on the validation data set, implements early termination if model did not improve for a configured number of epochs, reports and displays the progress of training and validation accuracies to allow visually recognize whether model is overfitting or underfitting.
+The training code is located in the cell **#30** of the notebook. The training code is able to resume the training from the epoch where it stopped the last time, it keeps track of the model state that performed best on the validation data set, implements early termination if model did not improve for a configured number of epochs, reports and displays the progress of training and validation accuracies to allow visually recognize whether model is overfitting or underfitting.
 
-The training itself is executed in the **TODO** cell of the notebook.
+The training itself is executed in the cell **#37** cell of the notebook.
 
 Initially I incorrectly assumed that learning rate automatically decays in the Adam optimizer, which apparently was not happening. Because it was time consuming to train each model, I have not tested all the models, but instead fine-tuned only the last one, by changing the learning rate after about 50 epochs manually.
 
@@ -245,11 +246,13 @@ Here are the results of the prediction:
 | Speed limit 50 |  Speed limit 50 |
 
 
-The model was able to correctly guess 7 of the 7 traffic signs, which gives an accuracy of 100%. This compares favorably to the accuracy on the test set of ...
+The model was able to correctly guess 7 of the 7 traffic signs, which gives an accuracy of 100%. This looks great and even higher than the accuracy on the test set of 0.981.
 
 ####3. Describe how certain the model is when predicting on each of the five new images by looking at the softmax probabilities for each prediction and identify where in your code softmax probabilities were outputted. Provide the top 5 softmax probabilities for each image along with the sign type of each probability. (OPTIONAL: as described in the "Stand Out Suggestions" part of the rubric, visualizations can also be provided such as bar charts)
 
-The code for making predictions on my final model is located in the 11th cell of the Ipython notebook.
+The code for making predictions on my final model is located in the cells **#41-#44** of the Ipython notebook.
+
+
 
 For the first image, the model is relatively sure that this is a stop sign (probability of 0.6), and the image does contain a stop sign. The top five soft max probabilities were
 
